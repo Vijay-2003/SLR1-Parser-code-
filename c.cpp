@@ -1,9 +1,22 @@
+/* This code reads a context-free grammar, 
+computes the FIRST and FOLLOW sets, 
+constructs the LR(0) automaton,
+and prints the parsing table used for SLR parsing. 
+The key steps involve reading the grammar, 
+computing the necessary sets, 
+constructing the state machine, 
+and generating the parsing table. */
+
 #include<bits/stdc++.h>
 #define error(x) cerr<<#x<<" = "<<x<<'\n'
 using namespace std;
 
-set<char> ss;
-map<char,vector<vector<char>>> mp;
+set<char> ss;  //A set to store characters during the computation of FIRST sets.
+map<char,vector<vector<char>>> mp; // A map to store the grammar rules, where each key is a non-terminal and the value is a list of production rules.
+
+//Compute FIRST Sets :
+// dfs computes the FIRST sets of non-terminals recursively.
+// It processes each production rule, adding terminals and epsilon ('e') appropriately to the FIRST set.
 bool dfs(char i, char org, char last, map<char,vector<vector<char>>> &mp){
     bool rtake = false;
     for(auto r : mp[i]){
@@ -30,10 +43,14 @@ bool dfs(char i, char org, char last, map<char,vector<vector<char>>> &mp){
     return rtake;
 }
 
-map<int,map<char,set<pair<deque<char>,deque<char>>>>> f;
-map<int,vector<pair<int,char>>> g;
+map<int,map<char,set<pair<deque<char>,deque<char>>>>> f; // A map to store states of the LR(0) automaton.
+map<int,vector<pair<int,char>>> g; // A map to store the edges of the automaton.
+int num = -1; // Counter for states
 
-int num = -1;
+
+// Construct LR(0) Automaton : 
+// dfs2 constructs the LR(0) automaton by expanding states and adding transitions.
+// It initializes state sets and processes them to handle non-terminals.
 void dfs2(char c, char way, int last, pair<deque<char>,deque<char>> curr){
     map<char,set<pair<deque<char>,deque<char>>>> mp2;
     int rep = -2;
@@ -88,8 +105,11 @@ void dfs2(char c, char way, int last, pair<deque<char>,deque<char>> curr){
     }
 }
 
-
+// Main Function
 int main(){
+    // Reading Grammar from File
+    // Reads grammar from "inputslr.txt".
+    // Prints the grammar and stores it in mp
     int i,j;
     ifstream fin("inputslr.txt");
     string num;
@@ -112,6 +132,9 @@ int main(){
         }
         mp[s].push_back(temp);
     }
+
+    // Compute FIRST Sets: 
+    // Computes and prints the FIRST sets of non-terminals using the dfs function.
     map<char,set<char>> fmp;
     for(auto q : mp){
         ss.clear();
@@ -134,6 +157,8 @@ int main(){
         cout<<ans<<'\n';
     }
 
+    // Compute FOLLOW Sets: 
+    // Computes and prints the FOLLOW sets for non-terminals.
     map<char,set<char>> gmp;
     gmp[start].insert('$');
     int count = 10;
@@ -196,6 +221,9 @@ int main(){
         ans+="}";
         cout<<ans<<'\n';
     }
+
+    // Construct LR(0) Automaton : 
+    // Prints the productions and initializes the construction of the LR(0) automaton using dfs2.
     string temp = "";
     temp+='.';
     temp+=start;
@@ -227,7 +255,10 @@ int main(){
             cc++;
         }
     }
-    
+
+    // Print Automaton and Parsing Table: 
+    // Prints the LR(0) automaton and the parsing table.
+    // Handles states and transitions, generating shift, reduce, and accept actions for the parser.
     cout<<"\nGraph: "<<'\n';
     for(auto mp2 : f){
         cout<<'\n';
@@ -328,3 +359,12 @@ int main(){
 
     return 0;
 }
+
+/* This code reads a context-free grammar, 
+computes the FIRST and FOLLOW sets, 
+constructs the LR(0) automaton,
+and prints the parsing table used for SLR parsing. 
+The key steps involve reading the grammar, 
+computing the necessary sets, 
+constructing the state machine, 
+and generating the parsing table. */
